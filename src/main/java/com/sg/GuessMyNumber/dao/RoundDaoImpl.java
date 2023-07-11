@@ -27,7 +27,7 @@ public class RoundDaoImpl implements RoundDao{
 
     @Override
     public List<Round> getAllOfGame(int game_id) {
-        final String sql = "SELECT * FROM round WHERE game_id = ? ORDER BY DATETIME;";
+        final String sql = "SELECT * FROM round WHERE gameId = ? ORDER BY guessTime";
 
         return jdbcTemplate.query(sql, new RoundMapper(), game_id);
     }
@@ -88,7 +88,7 @@ public class RoundDaoImpl implements RoundDao{
             Round Round = new Round();
             Round.setRoundId(rs.getInt("roundId"));
             Round.setGameId(rs.getInt("gameId"));
-            Round.setTimestamp(rs.getTimestamp("timestamp"));
+            Round.setTimestamp(rs.getTimestamp("guessTime"));
             Round.setGuess(rs.getString("guess"));
             Round.setResult(rs.getString("result"));
             return Round;
