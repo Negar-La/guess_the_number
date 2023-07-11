@@ -1,6 +1,7 @@
 package com.sg.GuessMyNumber.dao;
 
 import com.sg.GuessMyNumber.dto.Game;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,7 +15,7 @@ import java.util.List;
 public class GameDaoImpl implements GameDao{
 
     private final JdbcTemplate jdbcTemplate;
-
+    @Autowired
     public GameDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -45,7 +46,8 @@ public class GameDaoImpl implements GameDao{
                 game.isFinished());
 
         // Retrieve the last inserted ID
-        String selectLastIdQuery = "CALL IDENTITY()";
+
+        String selectLastIdQuery = "SELECT LAST_INSERT_ID()";
         int gameId = jdbcTemplate.queryForObject(selectLastIdQuery, Integer.class);
 
         // Set the game ID
