@@ -3,10 +3,11 @@ package com.sg.GuessMyNumber.service;
 import com.sg.GuessMyNumber.dao.GameDao;
 import com.sg.GuessMyNumber.dto.Game;
 import com.sg.GuessMyNumber.dto.Round;
+import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.*;
-
+@Service
 public class GameService {
 
     public Game newGame() {

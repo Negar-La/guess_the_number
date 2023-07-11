@@ -5,18 +5,19 @@ import com.sg.GuessMyNumber.dao.RoundDao;
 import com.sg.GuessMyNumber.dto.Game;
 import com.sg.GuessMyNumber.dto.Round;
 import com.sg.GuessMyNumber.service.GameService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/game")
+@RequestMapping("/api")
 public class GameController {
     private final GameDao gameDao;
     private final RoundDao roundDao;
 
-
+    @Autowired
     public GameController(GameDao gameDao, RoundDao roundDao) {
         this.gameDao = gameDao;
         this.roundDao = roundDao;
