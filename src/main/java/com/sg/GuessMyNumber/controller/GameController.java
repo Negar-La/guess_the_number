@@ -4,6 +4,7 @@ import com.sg.GuessMyNumber.dao.GameDao;
 import com.sg.GuessMyNumber.dao.RoundDao;
 import com.sg.GuessMyNumber.dto.Game;
 import com.sg.GuessMyNumber.dto.Round;
+import com.sg.GuessMyNumber.service.GameService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,27 +45,27 @@ public class GameController {
         return roundDao.addRound(round);
     }
 
-    public void getAllGames(List<Game> games) {
-        for (Game game : games) {
-            if (!game.isFinished()) {
-                game.setAnswer("****");
-            }
-        }
+    @GetMapping("/game")
+    public List<Game> all() {
+        List<Game> games = gameDao.getAllGames();
+        GameService service = new GameService();
+        service.getAllGames(games);
+        return games;
     }
 
-    public Round guessNumber(Game game, String guess, GameDao gameDao) {
-        Round round = checkGuess(game, guess);
-        if (game.isFinished()) {
-            gameDao.updateGame(game);
-        }
-        setTimeStamp(round);
-        round.setGameId(game.getGameId());
-
-        return round;
+    @GetMapping("game/{id}")
+    public Game getGameById(@PathVariable int id) {
+        Game game = gameDao.getGameById(id);
+        GameService service = new GameService();
+        return service.getGames(game);
     }
 
-    public Round checkGuess(Game game, String guess) {
-        return null;
-
+    @GetMapping("rounds/{gameId}")
+    public List<Round> getGameRounds(@PathVariable int gameId) {
+        return roundDao.getAllOfGame(gameId);
     }
+
 }
+
+
+
