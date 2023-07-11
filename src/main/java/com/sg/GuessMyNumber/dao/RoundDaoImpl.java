@@ -54,7 +54,7 @@ public class RoundDaoImpl implements RoundDao{
                 round.getResult());
 
         // Retrieve the last inserted ID
-        String selectLastIdQuery = "CALL IDENTITY()";
+        String selectLastIdQuery = "SELECT LAST_INSERT_ID()";
         int roundId = jdbcTemplate.queryForObject(selectLastIdQuery, Integer.class);
 
         // Set the round ID
