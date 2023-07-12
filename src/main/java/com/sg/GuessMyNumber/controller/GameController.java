@@ -1,13 +1,11 @@
 package com.sg.GuessMyNumber.controller;
 
-import com.sg.GuessMyNumber.dao.GameDao;
 import com.sg.GuessMyNumber.dto.Game;
 import com.sg.GuessMyNumber.dto.Round;
-import com.sg.GuessMyNumber.service.GameDataValidationException;
 import com.sg.GuessMyNumber.service.GameService;
-import com.sg.GuessMyNumber.service.RoundDataValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,16 +14,12 @@ import java.util.List;
 @RequestMapping("/api")
 public class GameController {
 
-
     private final GameService service;
 
     @Autowired
     public GameController(GameService service) {
         this.service = service;
-
     }
-
-
 
     @PostMapping("/begin")
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,14 +32,34 @@ public class GameController {
         return service.getGames(game);
     }
 
-
     @PostMapping("/guess")
     @ResponseStatus(HttpStatus.CREATED)
-    public Round guessNumber(@RequestBody Round body) throws GameDataValidationException, RoundDataValidationException {
+    public ResponseEntity<Round> guessNumber(@RequestBody Round body) throws Exception {
         //implemented
+
         Game game = service.getGameById(body.getGameId());
+        if(game == null){
+            return new ResponseEntity("Game not found.", HttpStatus.NOT_FOUND);
+        }
         Round round = service.guessNumber(game, body.getGuess());
-        return service.addRound(round);
+        if (round.getGuess().length() !=4 ) {
+            return new ResponseEntity("Guess object is not valid, it should be 4 digits", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if (game.getAnswer().length() != 4){
+            return new ResponseEntity("Game object is not valid, it should be 4 digits", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        //the chars() method converts the string into an IntStream of characters.
+        // The distinct() method ensures that only distinct characters are considered.
+        // Finally, the count() method is used to count the number of distinct characters.
+        if ((round.getGuess()).chars().distinct().count() != 4) {
+            return new ResponseEntity("Guess should contain 4 different numbers.", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
+        if (game.isFinished()){
+            return new ResponseEntity("You cannot guess for a finished game.", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+         service.addRound(round);
+         return ResponseEntity.ok(round);
     }
 
     @GetMapping("/game")
@@ -61,16 +75,28 @@ public class GameController {
     }
 
     @GetMapping("game/{id}")
-    public Game getGameById(@PathVariable int id) {
+    public ResponseEntity<Game> getGameById(@PathVariable int id) {
        Game game = service.getGameById(id);
-        return service.getGames(game);
+        if (game == null) {
+            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+        }
+        if (!game.isFinished()) {
+            game.setAnswer("****");
+        }
+
+        return ResponseEntity.ok(game);
     }
 
     @GetMapping("rounds/{gameId}")
-    public List<Round> getGameRounds(@PathVariable int gameId) {
-        return service.getAllOfGame(gameId);
-    }
+    public ResponseEntity  <List<Round>> getGameRounds(@PathVariable int gameId) {
+        Game game = service.getGameById(gameId);
+        if (game == null) {
+            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+        }
 
+        List<Round> rounds = service.getAllOfGame(gameId);
+        return ResponseEntity.ok(rounds);
+    }
 }
 
 
