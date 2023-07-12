@@ -39,11 +39,8 @@ class GameDaoImplTest {
         
     }
 
-
-
     @Test
     void addAndGetAllGames () {
-        //implemented
         GameService gameService = new GameService(gameDao, roundDao);
         Game game = gameService.newGame();
         Game game2 = gameService.newGame();
@@ -54,8 +51,6 @@ class GameDaoImplTest {
         assertEquals(2, games.size());
         assertTrue(games.contains(game));
         assertTrue(games.contains(game2));
-
-
     }
 
     @Test
