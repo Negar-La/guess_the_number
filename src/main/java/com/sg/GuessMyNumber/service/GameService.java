@@ -52,24 +52,11 @@ public class GameService {
         return game;
     }
 
-        public void validateGame(Game game) throws GameDataValidationException{
-        // check answer
-        if (game.getAnswer().length() != 4 ){
-            throw new GameDataValidationException("Game object is not valid.");
-        }
-    }
 
-    public void validateRound(Round round) throws RoundDataValidationException{
-        // check guess, timeOfGuess, result and gameId
-        if (round.getGuess().length() != 4){  // rest is done by controller/service
-            throw new RoundDataValidationException("Round object is not valid.");
-        }
-    }
 
-    public Round guessNumber(Game game, String guess) throws GameDataValidationException {
-        validateGame(game);
+    public Round guessNumber(Game game, String guess) {
+
         Round round = checkGuess(game, guess);
-        validateGame(game);
             if (game.isFinished()) {
                 gameDao.updateGame(game);
             }
@@ -77,14 +64,12 @@ public class GameService {
             round.setGameId(game.getGameId());
 
             return round;
-
-
     }
 
 
     // checks guess and sets the result
-    public Round checkGuess(Game game, String guess) throws GameDataValidationException {
-        validateGame(game);
+    public Round checkGuess(Game game, String guess)  {
+
         Round round = new Round();
         round.setGuess(guess);
 
@@ -124,18 +109,13 @@ public class GameService {
         round.setTimestamp(guessTime);
     }
 
-    public Round addRound(Round round) throws RoundDataValidationException {
-        validateRound(round);
+    public Round addRound(Round round) {
         return roundDao.addRound(round);
     }
-
-
 
     public List<Round> getAllOfGame(int id) {
         return roundDao.getAllOfGame(id);
     }
-
-
 
     public Game addGame(Game game) {
         return gameDao.addGame(game);
@@ -148,6 +128,7 @@ public class GameService {
     public Game getGameById(int id) {
         return gameDao.getGameById(id);
     }
+
     /*
 
     public void deleteGameById(int id) {
@@ -157,12 +138,6 @@ public class GameService {
     public void editGame(Game game) {
         gameDao.updateGame(game);
     }
-
-        public Round getRoundById(int id) {
-        return roundDao.getRoundById(id);
-    }
-
-
     public void deleteRoundById(int id) {
         roundDao.deleteRoundById(id);
     }
@@ -175,16 +150,10 @@ public class GameService {
         return roundDao.getAllRounds();
     }
 
+       public Round getRoundById(int id) {
+        return roundDao.getRoundById(id);
+    }
+
      */
-
-
-
-
-
-
-
-
-
-
 
 }
