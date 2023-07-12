@@ -36,17 +36,10 @@ class GameDaoImplTest {
         for (Game game : games) {
             gameDao.deleteGameById(game.getGameId());
         }
-
-//        List<Round> rounds = roundDao.getAllRounds();
-//        for (Round round : rounds) {
-//            gameDao.deleteGameById(round.getRoundId());
-//        }
+        
     }
 
-//    @Test
-//    void addGame () {
-//
-//    }
+
 
     @Test
     void addAndGetAllGames () {
@@ -67,14 +60,41 @@ class GameDaoImplTest {
 
     @Test
     void getGameById () {
+        GameService service = new GameService(gameDao, roundDao);
+        Game game = service.newGame();
+        Game game2 = service.newGame();
+
+        gameDao.addGame(game);
+        gameDao.addGame(game2);
+
+        gameDao.deleteGameById(game.getGameId());
+        List<Game> games = gameDao.getAllGames();
+        assertEquals(1, games.size());
     }
 
 
     @Test
     void updateGame () {
+        GameService gameService = new GameService(gameDao, roundDao);
+        Game game = gameService.newGame();
+        gameDao.addGame(game);
+        game.setFinished(true);
+        gameDao.updateGame(game);
+        Game updated = gameDao.getGameById(game.getGameId());
+        assertTrue(updated.isFinished());
     }
 
     @Test
     void deleteGameById () {
+        GameService gameService = new GameService(gameDao, roundDao);
+        Game game = gameService.newGame();
+        Game game2 = gameService.newGame();
+
+        gameDao.addGame(game);
+        gameDao.addGame(game2);
+
+        gameDao.deleteGameById(game.getGameId());
+        List<Game> games = gameDao.getAllGames();
+        assertEquals(1,games.size());
     }
 }
