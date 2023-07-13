@@ -2,7 +2,6 @@ package com.sg.GuessMyNumber.dao;
 import com.sg.GuessMyNumber.GuessMyNumberApplication;
 import com.sg.GuessMyNumber.dto.Game;
 import com.sg.GuessMyNumber.dto.Round;
-import com.sg.GuessMyNumber.service.GameService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -23,11 +22,7 @@ class RoundDaoImplTest {
     private RoundDao roundDao;
     @Autowired
     private GameDao gameDao;
-    @Autowired
-    public void GameDaoImplTest(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-        roundDao = new RoundDaoImpl(jdbcTemplate);
-    }
+
     public RoundDaoImplTest() {
     }
     @BeforeEach
@@ -44,26 +39,28 @@ class RoundDaoImplTest {
     @Test
     void addTestAndGetAllRounds() {
 //        arrange
-        GameService gameService = new GameService(gameDao, roundDao);
+//        using LocalDate Class
+        LocalDateTime currentDateTime = LocalDateTime.now();
 
-//        act (some arrange mixed in)
-        Game game = gameService.newGame();
+        Game game = new Game();
+        game.setGameId(game.getGameId());
+        game.setAnswer("5678");
+        game.setFinished(false);
+
+//      act
         gameDao.addGame(game);
 
-        Game game2 = gameService.newGame();
-        gameDao.addGame(game2);
 
         Round round = new Round();
         round.setGuess("2035");
         round.setGameId(game.getGameId());
-        round.setResult("e:2:p:2");
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        round.setResult("e:0:p:1");
         round.setTimestamp(Timestamp.valueOf(currentDateTime));
 
         Round round2 = new Round();
-        round2.setGuess("1234");
-        round2.setGameId(game2.getGameId());
-        round2.setResult("e:1:p:0");
+        round2.setGuess("3456");
+        round2.setGameId(game.getGameId());
+        round2.setResult("e:0:p:2");
         round2.setTimestamp(Timestamp.valueOf(currentDateTime));
 
         roundDao.addRound(round);
@@ -79,14 +76,16 @@ class RoundDaoImplTest {
     @Test
     void getAllOfGame() {
 //      ARRANGE:   add a game
-        GameService gameService = new GameService(gameDao, roundDao);
 //        using LocalDate Class
         LocalDateTime currentDateTime = LocalDateTime.now();
 
-//        Game game = gameService.newGame();
-//        gameDao.addGame(game);
-//
-        Game game2 = gameService.newGame();
+
+        Game game2 = new Game();
+        game2.setGameId(game2.getGameId());
+        game2.setAnswer("5678");
+        game2.setFinished(false);
+
+//        ACT
         gameDao.addGame(game2);
 
 //        creating rounds for the game
@@ -115,7 +114,7 @@ class RoundDaoImplTest {
         round4.setGuess("5678");
         round4.setResult("e:4:p:0");
 
-// adding the round to DAO
+// adding the rounds to DAO
         roundDao.addRound(round);
         roundDao.addRound(round2);
         roundDao.addRound(round3);
@@ -125,26 +124,8 @@ class RoundDaoImplTest {
 //        getting all rounds by gameID
         List<Round> rounds = roundDao.getAllOfGame(round.getGameId());
         System.out.println(rounds);
-
+//      ASSERT
         assertEquals(4, rounds.size());
     }
 
-  /*  @Test
-    void deleteRoundById() {
-        GameService gameService = new GameService(gameDao, roundDao);
-        Game game = gameService.newGame();
-        gameDao.addGame(game);
-        Round round = new Round();
-        round.setGuess("2035");
-        round.setGameId(game.getGameId());
-        round.setResult("e:2:p:2");
-        LocalDate currentDate = LocalDate.now();
-        Timestamp timestamp = Timestamp.valueOf(currentDate.atStartOfDay());
-        round.setTimestamp(timestamp);
-        roundDao.addRound(round);
-
-        roundDao.deleteRoundById(game.getGameId());
-        List<Round> rounds = roundDao.getAllRounds();
-        assertEquals(1, rounds.size());
-    } */
 }
