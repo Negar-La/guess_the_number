@@ -19,63 +19,95 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GuessMyNumberApplication.class)
 class GameDaoImplTest {
-    private JdbcTemplate jdbcTemplate;
-    private GameDao gameDao;
-    private RoundDao roundDao;
+
     @Autowired
-    public void GameDaoImplTest(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-        gameDao = new GameDaoImpl(jdbcTemplate);
-    }
+    private GameDao gameDao;
+
+    @Autowired
+    private RoundDao roundDao;
+
+
     public GameDaoImplTest() {
     }
 
     @BeforeEach
     void setUp() {
+        List<Round> rounds = roundDao.getAllRounds();
+        for(Round round : rounds) {
+            roundDao.deleteRoundById(round.getRoundId());
+        }
+
         List<Game> games = gameDao.getAllGames();
-        for (Game game : games) {
+        for(Game game : games) {
             gameDao.deleteGameById(game.getGameId());
         }
         
     }
 
     @Test
-    void addAndGetAllGames () {
-        GameService gameService = new GameService(gameDao, roundDao);
-        Game game = gameService.newGame();
-        Game game2 = gameService.newGame();
-        gameDao.addGame(game);
-        gameDao.addGame(game2);
-        List<Game> games = gameDao.getAllGames();
+    public void testAddGetGame() {
+        Game game = new Game();
+        game.setAnswer("2341");
+        game.setFinished(false);
 
-        assertEquals(2, games.size());
-        assertTrue(games.contains(game));
+        game = gameDao.addGame(game);
+        Game fromDao = gameDao.getGameById(game.getGameId());
+
+        assertEquals(game, fromDao);
+        System.out.println(fromDao.getGameId());
+    }
+    @Test
+    void addAndGetAllGames () {
+        Game game1 = new Game();
+        game1.setAnswer("2341");
+        game1.setFinished(false);
+        game1 = gameDao.addGame(game1);
+
+        Game game2 = new Game();
+        game2.setAnswer("1154");
+        game2.setFinished(false);
+        game2 = gameDao.addGame(game2);
+
+        List<Game> games = gameDao.getAllGames();
+        assertEquals(games.size(), 2);
+
+        assertTrue(games.contains(game1));
         assertTrue(games.contains(game2));
     }
 
 
     @Test
-    void updateGame () {
-        GameService gameService = new GameService(gameDao, roundDao);
-        Game game = gameService.newGame();
-        gameDao.addGame(game);
-        game.setFinished(true);
-        gameDao.updateGame(game);
-        Game updated = gameDao.getGameById(game.getGameId());
-        assertTrue(updated.isFinished());
+    public void testUpdateGame() {
+        Game game1 = new Game();
+        game1.setAnswer("2341");
+        game1.setFinished(false);
+        game1 = gameDao.addGame(game1);
+
+        game1.setAnswer("9874");
+        gameDao.updateGame(game1);
+
+        Game fromDao = gameDao.getGameById(game1.getGameId());
+
+        assertEquals(fromDao, game1);
+        assertNotEquals(fromDao.getAnswer(), "2341");
     }
 
     @Test
     void deleteAndGetGameById () {
-        GameService gameService = new GameService(gameDao, roundDao);
-        Game game = gameService.newGame();
-        Game game2 = gameService.newGame();
+        Game game1 = new Game();
+        game1.setAnswer("2341");
+        game1.setFinished(false);
+        game1 = gameDao.addGame(game1);
 
-        gameDao.addGame(game);
-        gameDao.addGame(game2);
+        Game game2 = new Game();
+        game2.setAnswer("1154");
+        game2.setFinished(false);
+        game2 = gameDao.addGame(game2);
 
-        gameDao.deleteGameById(game.getGameId());
+        gameDao.deleteGameById(game1.getGameId());
+
         List<Game> games = gameDao.getAllGames();
-        assertEquals(1,games.size());
+        assertEquals(1, games.size());
+        assertTrue(games.contains(game2));
     }
 }
