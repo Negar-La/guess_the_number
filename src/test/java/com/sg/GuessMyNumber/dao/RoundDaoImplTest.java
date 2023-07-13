@@ -65,16 +65,44 @@ class RoundDaoImplTest {
         System.out.println(rounds);
         assertEquals(2, rounds.size());
     }
+
     @Test
     void getAllOfGame() {
+        GameService gameService = new GameService(gameDao, roundDao);
+        Game game = gameService.newGame();
+        gameDao.addGame(game);
+        Game game2 = gameService.newGame();
+        gameDao.addGame(game2);
+        Round round = new Round();
+        round.setGuess("2035");
+        round.setGameId(game.getGameId());
+        round.setResult("e:2:p:2");
+        LocalDate currentDate = LocalDate.now();
+        Timestamp timestamp = Timestamp.valueOf(currentDate.atStartOfDay());
+        round.setTimestamp(timestamp);
+
+        roundDao.addRound(round);
+        List<Round> rounds = roundDao.getAllOfGame(round.getGameId());
+        System.out.println(rounds);
+        assertEquals(1, rounds.size());
     }
-    @Test
-    void getRoundById() {
-    }
-    @Test
-    void updateRound() {
-    }
-    @Test
+
+  /*  @Test
     void deleteRoundById() {
-    }
+        GameService gameService = new GameService(gameDao, roundDao);
+        Game game = gameService.newGame();
+        gameDao.addGame(game);
+        Round round = new Round();
+        round.setGuess("2035");
+        round.setGameId(game.getGameId());
+        round.setResult("e:2:p:2");
+        LocalDate currentDate = LocalDate.now();
+        Timestamp timestamp = Timestamp.valueOf(currentDate.atStartOfDay());
+        round.setTimestamp(timestamp);
+        roundDao.addRound(round);
+
+        roundDao.deleteRoundById(game.getGameId());
+        List<Round> rounds = roundDao.getAllRounds();
+        assertEquals(1, rounds.size());
+    } */
 }

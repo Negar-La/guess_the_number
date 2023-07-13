@@ -53,20 +53,6 @@ class GameDaoImplTest {
         assertTrue(games.contains(game2));
     }
 
-    @Test
-    void getGameById () {
-        GameService service = new GameService(gameDao, roundDao);
-        Game game = service.newGame();
-        Game game2 = service.newGame();
-
-        gameDao.addGame(game);
-        gameDao.addGame(game2);
-
-        gameDao.deleteGameById(game.getGameId());
-        List<Game> games = gameDao.getAllGames();
-        assertEquals(1, games.size());
-    }
-
 
     @Test
     void updateGame () {
@@ -80,7 +66,7 @@ class GameDaoImplTest {
     }
 
     @Test
-    void deleteGameById () {
+    void deleteAndGetGameById () {
         GameService gameService = new GameService(gameDao, roundDao);
         Game game = gameService.newGame();
         Game game2 = gameService.newGame();
