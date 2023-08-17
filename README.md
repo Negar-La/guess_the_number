@@ -1,4 +1,4 @@
-# Gess the Number (Bulls and Cows Game)
+# Guess the Number (Bulls and Cows Game)
 
 ## Overview
 
