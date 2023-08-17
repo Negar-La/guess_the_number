@@ -78,7 +78,7 @@ public class GameDaoImpl implements GameDao{
         public Game mapRow(ResultSet rs, int index) throws SQLException {
             Game game = new Game();
             game.setGameId(rs.getInt("gameId"));
-            game.setAnswer(rs.getString("answer"));
+            game.setAnswer(rs.getString("name"));
             game.setFinished(rs.getBoolean("isFinished"));
             return game;
         }
